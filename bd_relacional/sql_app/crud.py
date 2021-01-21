@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import update
+from itertools import chain
 
 from . import models, schemas
 
@@ -30,39 +31,15 @@ def get_items(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
-    new_item = models.Item(**item.dict(), owner_id=user_id)
-    db.add(new_item)
+    db_item = models.Item(**item.dict(), owner_id=user_id)
+    db.add(db_item)
     db.commit()
-    db.refresh(new_item)
-    return new_item
+    db.refresh(db_item)
+    return db_item
 
-# def update_user(db: Session, user_id: int, user: schemas.UserCreate):
-#     if user := get_user(db, user_id):
-#         db.query(models.User).filter(
-#             models.User.id == user_id
-#         ).first().update(user)
-#         db.commit()
-#         db.refresh(user)
-
-#         return user
-
-# def update_user(db: Session, user_id: int, user: schemas.UserCreate):
-#     return db.query(models.User).update().where(models.User.id == user_id).values(***user.dict())
-
-# def update_user(db: Session, user_id: int, user: schemas.UserCreate):
-#     return db.query(models.User).filter(models.User.id == user_id).\
-#         update({
-#             "email": "jpantunesdesouza13@gmail.com",
-#             "id": 1,
-#             "is_active": True,
-#             "items": []
-#         }, synchronize_session="fetch")
-
-# def update_user(db: Session, user_id: int, user: schemas.UserCreate):
-#     stmt = update(models.User).where(models.User.id == 1).values(
-#         email = "testfunction@gmail.com"
-#     ).\
-#     execution_options(synchronize_session="fetch")
-
-#     db.execute(stmt)
-# 
+def update_user(db: Session, user: schemas.UserBase, user_id: int):
+    db_user = get_user(db = db, user_id = user_id)
+    db_user.email = user.email
+    db.commit()
+    db.refresh(db_user)
+    return db_user

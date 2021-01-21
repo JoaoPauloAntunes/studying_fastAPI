@@ -22,13 +22,23 @@ class Item(ItemBase):
 
 class UserBase(BaseModel):
     email: str
+    # class Config:
+    #     schema_extra = {
+    #         "example": {
+    #             "email": "example@gmail.com"
+    #         }
+    #     }
 
 
 class UserCreate(UserBase):
     password: str
-
-class UserUpdate(UserCreate):
-    pass
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "example@gmail.com",
+                "password": "example"
+            }
+        }
 
 class User(UserBase):
     id: int
@@ -37,3 +47,11 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+        schema_extra = {
+            "example": {
+                "email": "example@gmail.com",
+                "id": 0,
+                "is_active": True,
+                "items": []
+            }
+        }
